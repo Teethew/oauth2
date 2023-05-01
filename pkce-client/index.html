@@ -1,0 +1,60 @@
+<html>
+    <body>
+        <div id="main"></div>
+    </body>
+</html>
+<script>
+    if (window.location.search == '') {
+
+        const body = document.querySelector('#main')
+
+        body.innerHTML = `
+            <button id="button">redirect</button>
+            `
+
+        const button = document.querySelector("#button")
+
+        button.addEventListener('click', () => {
+            const params = new URLSearchParams()
+            params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
+            params.set('redirect_uri', 'http://localhost:9000/continue')
+            params.set('response_type', 'code')
+            params.set('scope', 'user')
+            window.location.href = 'http://localhost:8000/authorize?' + params.toString() 
+        })
+    }    
+
+    if (window.location.pathname == '/continue') {
+
+        const params = new URLSearchParams(window.location.search)
+        if (params.get('code') == '123bla') {
+            fetch('http://localhost:8000/oauth/token', {
+                method: 'POST',
+                body: 'grant_type=authorization_code&client_id=I3MTYaR-yp5--SIm7u8th9jp&client_secret=85xoemhyxvr-F_c0gOtoeE2ucGGEzFC2fdDZM43uCTwDAbm1&redirect_uri=https://www.oauth.com/playground/authorization-code-with-pkce.html&code=Q2xBb8ZHj7JN9VA2GpROfhpISf0v-sLfZq4o-Gt1aKP3G9z_&code_verifier=ctd6O--5TaW_fM993ov4WVT5UPx_8Incq2nEnV3ngWOfB3I8',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+                .then(res => {
+                    return res.json()
+                })
+                .then(data => {
+
+                    const body = document.querySelector('#main')
+                    body.innerHTML = `
+                        <p>Here is your response: </p>
+                        <p><pre>${JSON.stringify(data, null, '\t')}</pre></p>
+                        <button id="button">do it again!</button>
+                        `
+                    const button = document.querySelector("#button")
+
+                    button.addEventListener('click', () => {
+                        const params = new URLSearchParams()
+                        params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
+                        params.set('redirect_uri', 'http://localhost:9000/continue')
+                        params.set('response_type', 'code')
+                        params.set('scope', 'user')
+                        window.location.href = 'http://localhost:8000/authorize?' + params.toString() 
+                    })
+                })
+        }
+    }
+</script>
