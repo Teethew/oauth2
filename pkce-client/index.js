@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
             break
     }
 
-    const html = fs.readFileSync(`.${file}`) 
+    const html = fs.readFileSync(file) 
 
     res.statusCode = 200
     res.end(html)
