@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html>
     <body>
         <div id="main"></div>
     </body>
 </html>
+<script src="./sha256.js"></script>
 <script>
     if (window.location.search == '') {
 
@@ -15,11 +17,22 @@
         const button = document.querySelector("#button")
 
         button.addEventListener('click', () => {
+            const state = random_string(16)
+            const code_verifier = random_string(48)
+            const code_challenge = base64_urlencode(sha256bin(code_verifier))
+
+            window.localStorage.setItem('state', state)
+            window.localStorage.setItem('code_verifier', code_verifier)
+
             const params = new URLSearchParams()
             params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
             params.set('redirect_uri', 'http://localhost:9000/continue')
             params.set('response_type', 'code')
             params.set('scope', 'user')
+            params.set('state', state)
+            params.set('code_challenge', code_challenge)
+            params.set('code_challenge_method', 'S256')
+
             window.location.href = 'http://localhost:8000/authorize?' + params.toString() 
         })
     }    
@@ -27,10 +40,15 @@
     if (window.location.pathname == '/continue') {
 
         const params = new URLSearchParams(window.location.search)
-        if (params.get('code') == '123bla') {
+        if (params.get('code')) {
+            params.set('grant_type', 'authorization_code')
+            params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
+            params.set('redirect_uri', 'http://localhost:9000/continue')
+            params.set('code_verifier', window.localStorage.getItem('code_verifier'))
+
             fetch('http://localhost:8000/oauth/token', {
                 method: 'POST',
-                body: 'grant_type=authorization_code&client_id=I3MTYaR-yp5--SIm7u8th9jp&client_secret=85xoemhyxvr-F_c0gOtoeE2ucGGEzFC2fdDZM43uCTwDAbm1&redirect_uri=https://www.oauth.com/playground/authorization-code-with-pkce.html&code=Q2xBb8ZHj7JN9VA2GpROfhpISf0v-sLfZq4o-Gt1aKP3G9z_&code_verifier=ctd6O--5TaW_fM993ov4WVT5UPx_8Incq2nEnV3ngWOfB3I8',
+                body: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
                 .then(res => {
@@ -48,13 +66,54 @@
 
                     button.addEventListener('click', () => {
                         const params = new URLSearchParams()
-                        params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
-                        params.set('redirect_uri', 'http://localhost:9000/continue')
-                        params.set('response_type', 'code')
-                        params.set('scope', 'user')
-                        window.location.href = 'http://localhost:8000/authorize?' + params.toString() 
+                        window.location.href = 'http://localhost:9000' 
                     })
                 })
         }
+    }
+
+    function hex2bin(s) {
+        //  discuss at: http://locutus.io/php/hex2bin/
+        // original by: Dumitru Uzun (http://duzun.me)
+        let ret = []
+        let i = 0
+        let l
+
+        s += ''
+
+        for (l = s.length; i < l; i += 2) {
+            var c = parseInt(s.substr(i, 1), 16)
+            var k = parseInt(s.substr(i + 1, 1), 16)
+            if (isNaN(c) || isNaN(k)) return false
+            ret.push((c << 4) | k)
+        }
+
+        return String.fromCharCode.apply(String, ret)
+    }
+
+    function dec2hex(dec) {
+        return ('0' + dec.toString(16)).substr(-2)
+    }
+
+    function dec2bin(arr) {
+        return hex2bin(Array.from(arr, dec2hex).join(''));
+    }
+
+    function sha256bin(ascii) {
+        return hex2bin(sha256(ascii));
+    }
+
+    function base64_urlencode(str) {
+        return btoa(str)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+    }
+
+    function random_string(len) {
+        const arr = new Uint8Array(len);
+        window.crypto.getRandomValues(arr);
+        const str = base64_urlencode(dec2bin(arr));
+        return str.substring(0, len);
     }
 </script>

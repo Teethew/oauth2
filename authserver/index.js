@@ -2,11 +2,13 @@ const http = require('node:http')
 const fs = require('node:fs')
 const { URLSearchParams } = require('node:url')
 
+const { randomString } = require('./crypt')
+
 const router = {}
 
 router['/login'] = (req, res, callback) => {
     const params = new URLSearchParams(req.payload)
-    res.setHeader('Location', `${params.get('redirect_uri')}?code=123bla`)
+    res.setHeader('Location', `${params.get('redirect_uri')}?code=123bla&state=${params.get('state')}`)
     callback(302)
 }
 
@@ -15,9 +17,9 @@ router['/oauth/token'] = (req, res, callback) => {
     res.write(JSON.stringify({
         "token_type": "Bearer",
         "expires_in": 86400,
-        "access_token": "Hc5304gugUf0PihmFnM_PYGFOohkwYwG-deF0FkhaR47EbxzZxBcSfa9bGAqi76sF0l0lo76",
+        "access_token": randomString(64),
         "scope": "photo offline_access",
-        "refresh_token": "iRPujtkh-DbcQ7hBEk61uH4b"
+        "refresh_token": randomString(48)
     }), 'utf8')
     callback(200)    
 }

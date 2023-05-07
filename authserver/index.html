@@ -7,33 +7,23 @@
             <input id="redirect_uri" name="redirect_uri" type="hidden">
             <input id="scope" name="scope" type="hidden">
             <input id="response_type" name="response_type" type="hidden">
+            <input id="state" name="state" type="hidden">
             <button type="submit">submit</button>
         </form>
     </body>
     <script>
-        if (window.location.pathname == '/login') {
+        const client_id = document.querySelector('#client_id')
+        const redirect_uri = document.querySelector('#redirect_uri')
+        const scope = document.querySelector('#scope')
+        const response_type = document.querySelector('#response_type')
+        const state = document.querySelector('#state')
+
 
         const params = new URLSearchParams(window.location.search)
-            if (params.get('code') == '123bla') {
-                fetch('/oauth/token', {
-                    method: 'POST',
-                    body: 'grant_type=authorization_code&client_id=I3MTYaR-yp5--SIm7u8th9jp&client_secret=85xoemhyxvr-F_c0gOtoeE2ucGGEzFC2fdDZM43uCTwDAbm1&redirect_uri=https://www.oauth.com/playground/authorization-code-with-pkce.html&code=Q2xBb8ZHj7JN9VA2GpROfhpISf0v-sLfZq4o-Gt1aKP3G9z_&code_verifier=ctd6O--5TaW_fM993ov4WVT5UPx_8Incq2nEnV3ngWOfB3I8',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                })
-            }
-        }
-
-        else {
-            const client_id = document.querySelector('#client_id')
-            const redirect_uri = document.querySelector('#redirect_uri')
-            const scope = document.querySelector('#scope')
-            const response_type = document.querySelector('#response_type')
-
-            const params = new URLSearchParams(window.location.search)
-            client_id.value = params.get('client_id')
-            redirect_uri.value = params.get('redirect_uri')
-            scope.value = params.get('scope')
-            response_type.value = params.get('response_type')
-        }
+        client_id.value = params.get('client_id')
+        redirect_uri.value = params.get('redirect_uri')
+        scope.value = params.get('scope')
+        response_type.value = params.get('response_type')
+        state.value = params.get('state')
     </script>
 </html>
