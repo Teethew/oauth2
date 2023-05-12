@@ -25,15 +25,15 @@
             window.localStorage.setItem('code_verifier', code_verifier)
 
             const params = new URLSearchParams()
-            params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
+            params.set('client_id', 'messaging-client')
             params.set('redirect_uri', 'http://localhost:9000/continue')
             params.set('response_type', 'code')
-            params.set('scope', 'user')
+            params.set('scope', 'openid')
             params.set('state', state)
             params.set('code_challenge', code_challenge)
             params.set('code_challenge_method', 'S256')
 
-            window.location.href = 'http://localhost:8000/authorize?' + params.toString() 
+            window.location.href = 'http://localhost:8080/oauth2/authorize?' + params.toString() 
         })
     }    
 
@@ -42,11 +42,11 @@
         const params = new URLSearchParams(window.location.search)
         if (params.get('code')) {
             params.set('grant_type', 'authorization_code')
-            params.set('client_id', 'I3MTYaR-yp5--SIm7u8th9jp')
+            params.set('client_id', 'messaging-client')
             params.set('redirect_uri', 'http://localhost:9000/continue')
             params.set('code_verifier', window.localStorage.getItem('code_verifier'))
 
-            fetch('http://localhost:8000/oauth/token', {
+            fetch('http://localhost:8080/oauth2/token', {
                 method: 'POST',
                 body: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

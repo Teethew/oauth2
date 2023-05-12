@@ -8,7 +8,7 @@ const router = {}
 
 router['/login'] = (req, res, callback) => {
     const params = new URLSearchParams(req.payload)
-    res.setHeader('Location', `${params.get('redirect_uri')}?code=123bla&state=${params.get('state')}`)
+    res.setHeader('Location', `${params.get('redirect_uri')}?code=${randomString(32).substring(0, 16)}&state=${params.get('state')}`)
     callback(302)
 }
 
