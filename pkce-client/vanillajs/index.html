@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        <div id="main"></div>
-    </body>
+
+<body>
+    <div id="main"></div>
+</body>
+
 </html>
 <script src="./sha256.js"></script>
 <script>
@@ -33,9 +35,9 @@
             params.set('code_challenge', code_challenge)
             params.set('code_challenge_method', 'S256')
 
-            window.location.href = 'http://localhost:8080/oauth2/authorize?' + params.toString() 
+            window.location.href = 'http://localhost:8080/oauth2/authorize?' + params.toString()
         })
-    }    
+    }
 
     if (window.location.pathname == '/continue') {
 
@@ -66,7 +68,7 @@
 
                     button.addEventListener('click', () => {
                         const params = new URLSearchParams()
-                        window.location.href = 'http://localhost:9000' 
+                        window.location.href = 'http://localhost:9000'
                     })
                 })
         }
