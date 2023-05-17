@@ -1,4 +1,4 @@
-function base64urlEncode(str: string) {
+export function base64urlEncode(str: string) {
     return btoa(str)
         .replace(/\+/g, '-')
         .replace(/\//g, '_')

@@ -109,13 +109,13 @@ public class SecurityConfig {
                 .clientId("messaging-client")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("http://localhost:9000/continue")
                 .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope("message.read")
-                .scope("message.write")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .clientSettings(ClientSettings
+                        .builder()
+                        .requireAuthorizationConsent(false)
+                        .requireProofKey(true)
+                        .build())
                 .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);

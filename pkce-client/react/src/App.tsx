@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import { generateRandomString } from './utils'
+import { base64urlEncode, generateRandomString } from './utils'
 import { sha256 } from 'js-sha256'
 
 export default function App() {
@@ -21,8 +21,15 @@ export default function App() {
                 <p>Code challenge (S256):</p>
                 <pre>{codeChallenge}</pre>
                 <button onClick={() => {
-                    setCodeVerifier(generateRandomString(48))
-                    setCodeChallenge(sha256(codeVerifier))
+                    let hash = ''
+                    const encoder = new TextEncoder()
+                    const randomString = generateRandomString(48)
+                    setCodeVerifier(randomString)
+                    const arrayBuf = sha256.digest(encoder.encode(randomString))
+                    for (let i = 0; i < arrayBuf.length; i++) {
+                        hash += String.fromCharCode(arrayBuf[i]);
+                    }
+                    setCodeChallenge(base64urlEncode(hash))
                 }}>
                     Generate code verifier
                 </button>
@@ -32,8 +39,15 @@ export default function App() {
                     const authServer = 'http://localhost:8080'
 
                     if (codeVerifier === '') {
-                        codeVerifier = generateRandomString(48)
-                        codeChallenge = sha256(codeVerifier)
+                        let hash = ''
+                        const encoder = new TextEncoder()
+                        const randomString = generateRandomString(48)
+                        codeVerifier = randomString
+                        const arrayBuf = sha256.digest(encoder.encode(randomString))
+                        for (let i = 0; i < arrayBuf.length; i++) {
+                            hash += String.fromCharCode(arrayBuf[i]);
+                        }
+                        codeChallenge = base64urlEncode(hash)
                     }
 
                     const state = generateRandomString(16)
